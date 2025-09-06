@@ -9,13 +9,12 @@ servers:
   web:
     - 65.108.228.167
 
-# Top-level container labels for Traefik routing
-labels:
-  traefik.enable: true
-  traefik.http.routers.campfire.rule: Host(`chat.vojto.dev`)
-  traefik.http.routers.campfire.entrypoints: websecure
-  traefik.http.routers.campfire.tls.certresolver: letsencrypt
-  traefik.http.services.campfire.loadbalancer.server.port: 80
+# Kamal 2 proxy configuration for SSL/TLS
+proxy:
+  host: chat.vojto.dev
+  ssl: true
+  # Optional: specify app port if different from default 3000
+  # app_port: 3000
 
 # Credentials for your image host.
 registry:
