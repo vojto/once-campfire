@@ -1,0 +1,56 @@
+# Name of your application. Used to uniquely configure containers.
+service: campfire
+
+# Name of the container image (builds from Dockerfile in the repo).
+image: ghcr.io/vojto/once-campfire
+
+# Deploy to these servers.
+servers:
+  web:
+    - 65.108.228.167
+  labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.campfire.rule=Host(`chat.vojto.dev`)"
+    - "traefik.http.routers.campfire.entrypoints=websecure"
+    - "traefik.http.routers.campfire.tls.certresolver=letsencrypt"
+    - "traefik.http.services.campfire.loadbalancer.server.port=80"
+
+# Credentials for your image host.
+registry:
+  server: ghcr.io
+  username:
+    - KAMAL_REGISTRY_USERNAME
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Inject ENV variables into containers (secrets come from .kamal/secrets).
+env:
+  secret:
+    - SECRET_KEY_BASE
+    - VAPID_PUBLIC_KEY
+    - VAPID_PRIVATE_KEY
+    # optional:
+    # - SENTRY_DSN
+  clear:
+    DISABLE_SSL: "1"
+
+# Persistent storage (SQLite DB + uploads live under /rails/storage).
+volumes:
+  - "campfire_storage:/rails/storage"
+
+# Bridge fingerprinted assets between versions.
+asset_path: /rails/public
+
+# Aliases for quick access.
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+
+# Configure the image builder.
+builder:
+  arch: amd64
+  cache:
+    type: registry
+    image: ghcr.io/vojto/once-campfire-build-cache
+    options: mode=max
