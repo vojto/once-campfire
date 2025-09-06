@@ -8,12 +8,14 @@ image: ghcr.io/vojto/once-campfire
 servers:
   web:
     - 65.108.228.167
-  labels:
-    - "traefik.enable=true"
-    - "traefik.http.routers.campfire.rule=Host(`chat.vojto.dev`)"
-    - "traefik.http.routers.campfire.entrypoints=websecure"
-    - "traefik.http.routers.campfire.tls.certresolver=letsencrypt"
-    - "traefik.http.services.campfire.loadbalancer.server.port=80"
+
+# Top-level container labels for Traefik routing
+labels:
+  - "traefik.enable=true"
+  - "traefik.http.routers.campfire.rule=Host(`chat.vojto.dev`)"
+  - "traefik.http.routers.campfire.entrypoints=websecure"
+  - "traefik.http.routers.campfire.tls.certresolver=letsencrypt"
+  - "traefik.http.services.campfire.loadbalancer.server.port=80"
 
 # Credentials for your image host.
 registry:
